@@ -62,7 +62,7 @@ services:
     environment:
       - POSTGRES_USER=test
       - POSTGRES_PASSWORD=test
-      - POSTGRES_DB=aggregate
+      - POSTGRES_DB=aggregate-db
     networks:
       - insurance-wallet-network
     ports:
@@ -70,14 +70,53 @@ services:
     volumes:
       - aggregate-service-db-volume:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD", "pg_isready", "-q", "-d", "aggregate", "-U", "test"]
+      test: [ "CMD", "pg_isready", "-q", "-d", "aggregate-db", "-U", "test"]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+
+  users-service:
+    container_name: users-service
+    build: ./users-service
+    environment:
+      - spring.profiles.active=docker
+      - server.port=8761
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka
+    networks:
+      - insurance-wallet-network
+    volumes:
+      - users-service-db-volume:/var/lib/postgresql/data
+    depends_on:
+      discovery-service:
+        condition: service_started
+      users-service-db:
+        condition: service_healthy
+    links:
+      - discovery-service
+      - users-service-db
+
+  users-service-db:
+    container_name: users-service-db
+    image: postgres:13.4-alpine
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=users-db
+    networks:
+      - insurance-wallet-network
+    ports:
+      - '5433:5332'
+    volumes:
+      - users-service-db-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "users-db", "-U", "test" ]
       timeout: 45s
       interval: 10s
       retries: 10
 
 volumes:
   aggregate-service-db-volume:
-
+  users-service-db-volume:
 networks:
   insurance-wallet-network:
     driver: bridge

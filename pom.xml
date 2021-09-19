@@ -26,6 +26,7 @@
         <module>discovery-service</module>
         <module>api-gateway</module>
         <module>aggregate-service</module>
+        <module>users-service</module>
     </modules>
 
     <dependencyManagement>
