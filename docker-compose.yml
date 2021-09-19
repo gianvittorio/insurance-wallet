@@ -1,4 +1,4 @@
-version: '3.3'
+version: '2.1'
 
 services:
   discovery-service:
@@ -32,7 +32,51 @@ services:
       - '8082:8082'
     networks:
       - insurance-wallet-network
+    depends_on:
+      - discovery-service
+    links:
+      - discovery-service
     restart: always
+
+  aggregate-service:
+    container_name: aggregate-service
+    build: ./aggregate-service
+    environment:
+      - spring.profiles.active=docker
+      - server.port=8761
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka
+    networks:
+      - insurance-wallet-network
+    depends_on:
+      discovery-service:
+        condition: service_started
+      aggregate-service-db:
+        condition: service_healthy
+    links:
+      - discovery-service
+      - aggregate-service-db
+
+  aggregate-service-db:
+    container_name: aggregate-service-db
+    image: postgres:13.4-alpine
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=aggregate
+    networks:
+      - insurance-wallet-network
+    ports:
+      - '5432:5332'
+    volumes:
+      - aggregate-service-db-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "aggregate", "-U", "test"]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+
+volumes:
+  aggregate-service-db-volume:
 
 networks:
   insurance-wallet-network:

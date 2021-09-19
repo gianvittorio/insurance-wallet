@@ -11,7 +11,7 @@
 
 	<groupId>com.gianvittorio.insurance-wallet</groupId>
 	<artifactId>discovery-service</artifactId>
-	<version>0.0.1-SNAPSHOT</version>
+	<version>${global.version}</version>
 	<name>discovery-service</name>
 	<description>Discovery Service</description>
 	<packaging>jar</packaging>

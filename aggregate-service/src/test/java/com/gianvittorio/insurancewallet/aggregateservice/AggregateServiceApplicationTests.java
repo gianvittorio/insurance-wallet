@@ -1,10 +1,10 @@
-package com.gianvittorio.insurancewallet;
+package com.gianvittorio.insurancewallet.aggregateservice;
 
 import org.junit.jupiter.api.Test;
 import org.springframework.boot.test.context.SpringBootTest;
 
 @SpringBootTest
-class InsuranceWalletApplicationTests {
+class AggregateServiceApplicationTests {
 
 	@Test
 	void contextLoads() {

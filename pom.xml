@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.gianvittorio.insurance-wallet</groupId>
     <artifactId>insurance-wallet</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${global.version}</version>
     <name>insurance-wallet</name>
     <description>Insurance Wallet Microservices Landscape</description>
     <packaging>pom</packaging>
@@ -18,12 +18,14 @@
     <properties>
         <java.version>11</java.version>
         <spring-cloud.version>2020.0.2</spring-cloud.version>
+        <global.version>0.0.1-SNAPSHOT</global.version>
     </properties>
 
     <modules>
         <module>common</module>
         <module>discovery-service</module>
         <module>api-gateway</module>
+        <module>aggregate-service</module>
     </modules>
 
     <dependencyManagement>

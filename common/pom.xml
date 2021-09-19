@@ -11,13 +11,10 @@
 
     <groupId>com.gianvittorio.insurance-wallet</groupId>
     <artifactId>common</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>${global.version}</version>
     <name>common</name>
     <description>Common Components</description>
     <packaging>jar</packaging>
-
-    <dependencies>
-    </dependencies>
 
     <build>
         <plugins>
