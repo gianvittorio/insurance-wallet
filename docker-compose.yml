@@ -1,0 +1,39 @@
+version: '3.3'
+
+services:
+  discovery-service:
+    container_name: discovery-service
+    build: ./discovery-service
+    expose:
+      - '8761/tcp'
+    environment:
+      - spring.profiles.active=docker
+      - server.port=8761
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka
+      - eureka.client.register-with-eureka=false
+      - eureka.client.fetch-registry=false
+      - eureka.instance.prefer-ip-address=true
+    ports:
+      - '8761:8761'
+    networks:
+      - insurance-wallet-network
+    restart: always
+
+  api-gateway:
+    container_name: api-gateway
+    build: ./api-gateway
+    expose:
+      - '8082/tcp'
+    environment:
+      - spring.profiles.active=docker
+      - server.port=8761
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka
+    ports:
+      - '8082:8082'
+    networks:
+      - insurance-wallet-network
+    restart: always
+
+networks:
+  insurance-wallet-network:
+    driver: bridge
