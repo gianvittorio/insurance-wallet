@@ -27,6 +27,7 @@
         <module>api-gateway</module>
         <module>aggregate-service</module>
         <module>users-service</module>
+        <module>insurance-service</module>
     </modules>
 
     <dependencyManagement>

@@ -114,9 +114,50 @@ services:
       interval: 10s
       retries: 10
 
+  insurance-service:
+    container_name: insurance-service
+    build: ./insurance-service
+    environment:
+      - spring.profiles.active=docker
+      - server.port=8761
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka
+    networks:
+      - insurance-wallet-network
+    volumes:
+        - insurance-service-db-volume:/var/lib/postgresql/data
+    depends_on:
+      discovery-service:
+        condition: service_started
+      insurance-service-db:
+          condition: service_healthy
+    links:
+      - discovery-service
+      - insurance-service-db
+
+  insurance-service-db:
+    container_name: insurance-service-db
+    image: postgres:13.4-alpine
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=users-db
+    networks:
+      - insurance-wallet-network
+    ports:
+      - '5434:5332'
+    volumes:
+      - insurance-service-db-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "users-db", "-U", "test" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+
 volumes:
   aggregate-service-db-volume:
   users-service-db-volume:
+  insurance-service-db-volume:
+
 networks:
   insurance-wallet-network:
     driver: bridge
