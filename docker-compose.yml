@@ -26,7 +26,6 @@ services:
       - '8082/tcp'
     environment:
       - spring.profiles.active=docker
-      - server.port=8761
       - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka
     ports:
       - '8082:8082'
@@ -43,7 +42,6 @@ services:
     build: ./aggregate-service
     environment:
       - spring.profiles.active=docker
-      - server.port=8761
       - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka
     networks:
       - insurance-wallet-network
@@ -66,7 +64,7 @@ services:
     networks:
       - insurance-wallet-network
     ports:
-      - '5432:5332'
+      - '5432:5432'
     volumes:
       - aggregate-service-db-volume:/var/lib/postgresql/data
     healthcheck:
@@ -80,7 +78,6 @@ services:
     build: ./users-service
     environment:
       - spring.profiles.active=docker
-      - server.port=8761
       - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka
     networks:
       - insurance-wallet-network
@@ -105,7 +102,7 @@ services:
     networks:
       - insurance-wallet-network
     ports:
-      - '5433:5332'
+      - '5433:5432'
     volumes:
       - users-service-db-volume:/var/lib/postgresql/data
     healthcheck:
@@ -119,7 +116,6 @@ services:
     build: ./insurance-service
     environment:
       - spring.profiles.active=docker
-      - server.port=8761
       - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka
     networks:
       - insurance-wallet-network
@@ -140,15 +136,53 @@ services:
     environment:
       - POSTGRES_USER=test
       - POSTGRES_PASSWORD=test
-      - POSTGRES_DB=users-db
+      - POSTGRES_DB=insurance-db
     networks:
       - insurance-wallet-network
     ports:
-      - '5434:5332'
+      - '5434:5432'
     volumes:
       - insurance-service-db-volume:/var/lib/postgresql/data
     healthcheck:
-      test: [ "CMD", "pg_isready", "-q", "-d", "users-db", "-U", "test" ]
+      test: [ "CMD", "pg_isready", "-q", "-d", "insurance-db", "-U", "test" ]
+      timeout: 45s
+      interval: 10s
+      retries: 10
+
+  b2b-service:
+    container_name: b2b-service
+    build: ./b2b-service
+    environment:
+      - spring.profiles.active=docker
+      - eureka.client.serviceUrl.defaultZone=http://discovery-service:8761/eureka
+    networks:
+      - insurance-wallet-network
+    volumes:
+      - b2b-service-db-volume:/var/lib/postgresql/data
+    depends_on:
+      discovery-service:
+        condition: service_started
+      b2b-service-db:
+        condition: service_healthy
+    links:
+      - discovery-service
+      - b2b-service-db
+
+  b2b-service-db:
+    container_name: b2b-service-db
+    image: postgres:13.4-alpine
+    environment:
+      - POSTGRES_USER=test
+      - POSTGRES_PASSWORD=test
+      - POSTGRES_DB=b2b-db
+    networks:
+      - insurance-wallet-network
+    ports:
+      - '5435:5432'
+    volumes:
+      - b2b-service-db-volume:/var/lib/postgresql/data
+    healthcheck:
+      test: [ "CMD", "pg_isready", "-q", "-d", "b2b-db", "-U", "test" ]
       timeout: 45s
       interval: 10s
       retries: 10
@@ -157,6 +191,7 @@ volumes:
   aggregate-service-db-volume:
   users-service-db-volume:
   insurance-service-db-volume:
+  b2b-service-db-volume:
 
 networks:
   insurance-wallet-network:

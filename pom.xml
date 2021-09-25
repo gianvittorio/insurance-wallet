@@ -28,6 +28,7 @@
         <module>aggregate-service</module>
         <module>users-service</module>
         <module>insurance-service</module>
+        <module>b2b-service</module>
     </modules>
 
     <dependencyManagement>
