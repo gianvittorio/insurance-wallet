@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.data.r2dbc.config.AbstractR2dbcConfiguration;
+import org.springframework.data.r2dbc.core.R2dbcEntityTemplate;
 import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories;
 import org.springframework.r2dbc.connection.init.CompositeDatabasePopulator;
 import org.springframework.r2dbc.connection.init.ConnectionFactoryInitializer;
@@ -45,5 +46,10 @@ public class R2DBCConfiguration extends AbstractR2dbcConfiguration {
     @Bean
     public Mono<Connection> connectionMono(final ConnectionFactory connectionFactory) {
         return Mono.from(connectionFactory.create());
+    }
+
+    @Bean
+    public R2dbcEntityTemplate entityTemplate(final ConnectionFactory connectionFactory) {
+        return new R2dbcEntityTemplate(connectionFactory);
     }
 }

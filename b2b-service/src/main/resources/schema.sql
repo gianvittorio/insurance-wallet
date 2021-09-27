@@ -1,7 +1,7 @@
 BEGIN;
 
 
-CREATE SEQUENCE IF NOT EXISTS segment_id_seq START 1;
+CREATE SEQUENCE IF NOT EXISTS segment_id_seq;
 
 CREATE TABLE IF NOT EXISTS segments (
     segment_id INT NOT NULL DEFAULT NEXTVAL('segment_id_seq'),
@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS segments (
 CREATE INDEX IF NOT EXISTS segment_name_id on segments(segment_name);
 
 
-CREATE SEQUENCE IF NOT EXISTS coverage_id_seq START 1;
+CREATE SEQUENCE IF NOT EXISTS coverage_id_seq;
 
 CREATE TABLE IF NOT EXISTS coverage (
     coverage_id INT NOT NULL DEFAULT NEXTVAL('coverage_id_seq'),
@@ -32,15 +32,14 @@ CREATE TABLE IF NOT EXISTS segment_coverage(
 );
 
 
-CREATE SEQUENCE IF NOT EXISTS companies_id_seq START 1;
+CREATE SEQUENCE IF NOT EXISTS companies_id_seq;
 
 CREATE TABLE IF NOT EXISTS companies (
     company_id INT NOT NULL DEFAULT NEXTVAL('companies_id_seq'),
     company_name VARCHAR(50) UNIQUE NOT NULL,
     company_document VARCHAR(50) UNIQUE NOT NULL,
     segment_id INT NOT NULL,
-    PRIMARY KEY (company_id),
-    CONSTRAINT fk_segment FOREIGN KEY(segment_id) REFERENCES segments(segment_id)
+    PRIMARY KEY (company_id)
 );
 
 CREATE INDEX IF NOT EXISTS company_name_id on companies(company_name);

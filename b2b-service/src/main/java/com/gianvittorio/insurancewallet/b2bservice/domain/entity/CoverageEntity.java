@@ -20,7 +20,7 @@ public class CoverageEntity {
 
     @Id
     @Column("coverage_id")
-    private Long id;
+    private Integer id;
 
     @Column("coverage_name")
     @NotBlank

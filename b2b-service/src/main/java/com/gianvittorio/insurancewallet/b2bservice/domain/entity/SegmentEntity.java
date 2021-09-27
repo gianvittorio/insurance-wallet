@@ -5,11 +5,12 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Transient;
 import org.springframework.data.relational.core.mapping.Column;
 import org.springframework.data.relational.core.mapping.Table;
 
 import javax.validation.constraints.NotBlank;
-import java.util.SortedSet;
+import java.util.Set;
 
 @Data
 @Builder
@@ -20,7 +21,7 @@ public class SegmentEntity {
 
     @Id
     @Column("segment_id")
-    private Long id;
+    private Integer id;
 
     @Column("segment_name")
     @NotBlank
@@ -29,5 +30,6 @@ public class SegmentEntity {
     @Column("segment_description")
     private String description;
 
-    SortedSet<CoverageEntity> coverageEntities;
+    @Transient
+    Set<CoverageEntity> coverageEntities;
 }
